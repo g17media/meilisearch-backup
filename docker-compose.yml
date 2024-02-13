@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+  meilisearch:
+    image: getmeili/meilisearch:v1.6.1
+    volumes:
+      - ./data.ms:/meili_data/data.ms
+      - ./dumps:/tmp/dumps
+    ports:
+      - 7700:7700
+    environment:
+      MEILI_ENV: development
+      MEILI_MASTER_KEY: 'DEVLOCALMASTERKEY'
+      MEILI_NO_ANALYTICS: 'true'
+      MEILI_DUMP_DIR: '/tmp/dumps'
+      MEILI_IMPORT_DUMP: '/tmp/dumps/meilisearch_backup.dump'
+      MEILI_IGNORE_DUMP_IF_DB_EXISTS: 'true'
+      MEILI_IGNORE_MISSING_DUMP: 'true'
+      MEILI_HTTP_PAYLOAD_SIZE_LIMIT: '1Gb'
+      MEILI_EXPERIMENTAL_ENABLE_METRICS: 'true'
+      LOG_LEVEL: 'INFO'
+
+  meilisearch-backup:
+    image: meilisearch-backup:latest
+    depends_on:
+      - meilisearch
+      - minio
+    volumes:
+      - ./dumps:/tmp/dumps
+      # - ./meilisearch-backup:/srv  # for development in a container
+    command: ["python", "-m", "meilisearch_backup"]
+    environment:
+      S3_ENDPOINT: "http://minio:9000"
+      S3_ACCESS_KEY: minioadmin
+      S3_SECRET_KEY: minioadmin
+      S3_MEILISEARCH_BUCKET: meilisearch-backup
+      MEILI_URL: "http://meilisearch:7700"
+      MEILI_MASTER_KEY: "DEVLOCALMASTERKEY"
+      MEILI_MIN_DUMP_SIZE_BYTES: 20
+
+  minio:
+    image: bitnami/minio:2024.2.9
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_DEFAULT_BUCKETS: meilisearch-backup

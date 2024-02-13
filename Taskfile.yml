@@ -1,0 +1,40 @@
+version: "3"
+
+tasks:
+  build:
+    dir: "{{.USER_WORKING_DIR}}/meilisearch-backup"
+    cmds:
+      - docker build . -t meilisearch-backup:latest
+
+  up:
+    desc: "up all app containers, need 5 sec sleep for init minio"
+    cmds:
+      - docker compose up meilisearch minio -d
+      - sleep 5
+      - docker compose up meilisearch-backup -d
+  ps:
+    desc: "show containers"
+    cmds:
+      - docker compose ps -a
+  logs:
+    desc: "show container logs"
+    cmds:
+      - docker compose logs
+  down:
+    desc: "down all containers"
+    cmds:
+      - docker compose down --remove-orphans
+
+  exec-backup:
+    desc: "exec meilisearch-backup"
+    cmds:
+      - docker-compose -f docker-compose.yml exec meilisearch-backup bash
+  exec-meili:
+    desc: "exec meilisearch"
+    cmds:
+      - docker-compose -f docker-compose.yml exec meilisearch sh
+
+  run-backup:
+    desc: "run meilisearch-backup"
+    cmds:
+      - docker-compose -f docker-compose.yml exec meilisearch-backup python meilisearch_backup/actions/backup.py

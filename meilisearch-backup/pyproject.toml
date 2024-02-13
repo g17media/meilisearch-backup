@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "meilisearch-backup"
+version = "0"
+description = ""
+authors = ["Artur Akmalov <artur@akmalov.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+boto3 = "^1.28.41"
+pydantic-settings = "^2.0.3"
+schedule = "^1.2.0"
+meilisearch-python-sdk = "^2.6.0"
+loguru = "^0.7.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ["py312"]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+multi_line_output = 3
+lines_after_imports = 2
+no_lines_before = ["STDLIB", "LOCALFOLDER"]
+skip_gitignore = true
+
+[tool.mypy]
+python_version = "3.12"
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_return_any = true
+warn_unreachable = true
+disallow_incomplete_defs = true
+ignore_missing_imports = true
+
+[tool.pylint.master]
+ignore = [".venv"]
+max-line-length = 120
