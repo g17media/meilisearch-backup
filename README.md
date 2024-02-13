@@ -55,6 +55,7 @@ Build
 task build
 ```
 
+Run docker-compose
 ```bash
 task up
 ```
