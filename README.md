@@ -1,2 +1,2 @@
-# meilisearch_backup
+# Meilisearch backup
 meilisearch backup s3
