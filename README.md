@@ -13,7 +13,7 @@ Feature:
 - containerized
 - automatic scheduled
 - easy restore dump file
-- use in docker-compose or cronjob
+- use in docker-compose or k8s sidecar or k8s cronjob
 - save the latest 3 versions by default
 - customizable
 
@@ -92,3 +92,54 @@ All script settings can be found in the file - `meilisearch_backup/meilisearch_b
 | s3_backup_name | meilisearch_backup.dump | recovery dump file name |
 | s3_number_of_saved_buckets | 3 | number of files to be saved S3 |
 | number_of_saved_dumps | 3 | number of files to be saved in the local file system |
+
+---
+
+k8s sidecar container example:
+```YAML
+containers: 
+  - name: meilisearch-backup
+    image: meilisearch-backup:1.1.0
+    command:
+      - python
+    args:
+      - '-m'
+      - meilisearch_backup
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    envFrom:
+      - configMapRef:
+          name: meilisearch-environment
+    volumeMounts:
+      - name: tmp
+        mountPath: /tmp
+```
+
+k8s cronjob container example:
+```
+containers: 
+  - name: meilisearch-backup
+    image: meilisearch-backup:1.1.0
+    command:
+      - python
+    args:
+      - 'meilisearch_backup/action/backup.py'
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    envFrom:
+      - configMapRef:
+          name: meilisearch-environment
+    volumeMounts:
+      - name: tmp
+        mountPath: /tmp
+```
