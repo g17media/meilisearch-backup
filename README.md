@@ -121,7 +121,7 @@ containers:
 ```
 
 k8s cronjob container example:
-```
+```YAML
 containers: 
   - name: meilisearch-backup
     image: meilisearch-backup:1.1.0
