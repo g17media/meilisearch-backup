@@ -13,7 +13,7 @@ Feature:
 - containerized
 - automatic scheduled
 - easy restore dump file
-- use in docker-compose or k8s sidecar or k8s cronjob
+- use in docker-compose or k8s sidecar container
 - save the latest 3 versions by default
 - customizable
 
@@ -105,30 +105,6 @@ containers:
     args:
       - '-m'
       - meilisearch_backup
-    resources:
-      limits:
-        cpu: 200m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 128Mi
-    envFrom:
-      - configMapRef:
-          name: meilisearch-environment
-    volumeMounts:
-      - name: tmp
-        mountPath: /tmp
-```
-
-k8s cronjob container example:
-```YAML
-containers: 
-  - name: meilisearch-backup
-    image: meilisearch-backup:1.1.0
-    command:
-      - python
-    args:
-      - 'meilisearch_backup/action/backup.py'
     resources:
       limits:
         cpu: 200m
