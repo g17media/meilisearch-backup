@@ -5,7 +5,7 @@ WORKDIR /srv/
 COPY pyproject.toml .
 COPY poetry.lock .
 
-RUN apt update && apt upgrade -y && pip install poetry
+RUN apt update && apt upgrade -y && pip install 'poetry<2.0'
 
 RUN poetry config virtualenvs.create false
 RUN poetry install
